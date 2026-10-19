@@ -1,0 +1,7 @@
+apartment1:
+city:taiz
+neighborhood:alrodah
+floor:2
+price:1000
+number of rooms:6
+
