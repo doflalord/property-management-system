@@ -1,6 +1,7 @@
-#محمد عبدالقادر هزاع
-#محمد بسام شرف 
-#محمد اسماعيل محمد
+
+# ==========================================
+# 1. INITIAL DATA & ACCOUNTS
+# ==========================================
 lands = {
     "land1": {
         "city": "Taiz",
@@ -51,8 +52,8 @@ apartments = {
 sold_lands = {}
 sold_houses = {}
 sold_apartments = {}
-request_of_purchase = {} #طلبات شراء من الزبائن
-request_of_sell = {}#طلبات عرض عقارات في البرنامج
+request_of_purchase = {}  # Stores customer purchase requests
+request_of_sell = {}      # Stores customer property sale offers
 
 accounts = {
     "admin": {
@@ -103,7 +104,13 @@ accounts = {
         "role": "customer"
     }
 }
-def save_to_file(file  , data): #دالة حفظ المعلومات قبل الخروج
+
+
+# ==========================================
+# 2. FILE HANDLING FUNCTIONS
+# ==========================================
+# Save dictionary data to a text file before exiting
+def save_to_file(file  , data):
     with open(file,'w') as f :
         for key , value in data.items():
             f.write(f"{key}:\n")
@@ -111,13 +118,14 @@ def save_to_file(file  , data): #دالة حفظ المعلومات قبل ال�
                 f.write(f"{k}:{v}\n")
             f.write("\n")    
 
-def load_from_file(file): #تحميل المعلومات من الملفات عن البدء
+# Load dictionary data from a text file at startup
+def load_from_file(file):
     data = {}
     with open(file,'r') as f :
         lines = f.readlines()
     current_key = None
     for line in lines :
-        line = line.strip() #حذف المسافات البيضاء لكل سطر
+        line = line.strip()
         if not line :
                 continue
         if line.endswith(":") and ":" not in line[:-1] :
@@ -129,13 +137,18 @@ def load_from_file(file): #تحميل المعلومات من الملفات ع�
 
     return data            
 
-def property_type(): #دالة معرفة نوع العقار
+
+# ==========================================
+# 3. PROPERTY OPERATIONS
+# ==========================================
+# Prompt user to select a property category
+def property_type():
     while True:
-        print("\nCHOOSE PROPERTY TYPE:")#اختار نوع العقار
-        print("1- Land")#ارض
-        print("2- House")#منزل
-        print("3- Apartment")#شقة
-        print("0- Back")#رجوع
+        print("\nCHOOSE PROPERTY TYPE:")
+        print("1- Land")
+        print("2- House")
+        print("3- Apartment")
+        print("0- Back")
         try:
             prop_type = int(input("Enter your choice: "))
             if 0 <= prop_type <= 3:
@@ -145,7 +158,8 @@ def property_type(): #دالة معرفة نوع العقار
         except ValueError:
             print("Please enter a valid number")
 
-def input_property_data(property_type_num): #دالة ادخال بيانات العقارات 
+# Collect property details based on the selected property type
+def input_property_data(property_type_num):
     data = {}
     data["city"] = input("Enter city: ").strip()
     data["neighborhood"] = input("Enter neighborhood: ").strip()
@@ -158,29 +172,31 @@ def input_property_data(property_type_num): #دالة ادخال بيانات ا
     if property_type_num == 1:
         data["size"] = input("Enter size of land: ").strip()
     elif property_type_num == 2:
-        data["floors"] = input("Enter number of floors: ").strip() #ادخل عدد الطوابق
+        data["floors"] = input("Enter number of floors: ").strip()
         data["number of apartments"] = input("Enter number of apartments: ").strip()
     elif property_type_num == 3:
         data["floor"] = input("Enter floor number: ").strip()
         data["number of rooms"] = input("Enter number of rooms: ").strip()
     return data
 
-def print_property_data(property_dict):#دالة طباعة العقارات 
+# Display formatted property records
+def print_property_data(property_dict):
     if not property_dict:
-        print("No properties available.") #لا يوجد عقارات
+        print("No properties available.")
         return
     for prop_name, prop_data in property_dict.items():
         print(f"\n{prop_name.upper()}:")
         for key, value in prop_data.items():
             print(f"{key.title()}: {value}")
 
-def sort_data(property):#دالة عرض العقارات 
+# Sort and display properties by city, price, or default order
+def sort_data(property):
     while True:
         print("SORTING OPTIONS:")
-        print("1- Sort by city name") #ترتيب ب اسم المدينة 
-        print("2- Sort by price")#ترتيب بالسعر
-        print("3- Display without sorting")#بدون الترتيب
-        print("0- Back")   #رجوع
+        print("1- Sort by city name")
+        print("2- Sort by price")
+        print("3- Display without sorting")
+        print("0- Back")
         try:
             op = int(input("Enter your choice: "))
         except ValueError:
@@ -188,10 +204,10 @@ def sort_data(property):#دالة عرض العقارات
             continue 
         if op == 0:
             break
-        elif op == 1: #الترتيب ب اسم المدينة
-            cities = set() #المدن
+        elif op == 1:  # Sort by city name
+            cities = set()
             for d in property.values():
-                cities.add(d.get("city"))#ضيف المدينة الى مجموعه المدن
+                cities.add(d.get("city"))
             for c in sorted(cities):
                 print(f"\n{c.upper()}:")
                 for name, value in property.items():
@@ -200,7 +216,7 @@ def sort_data(property):#دالة عرض العقارات
                         for k, v in value.items():
                             print(f"{k.title()}: {v}")
             break
-        elif op == 2: #الترتيب ب السعر
+        elif op == 2:  # Sort by price
             prices ={} 
             for d in property.values() :
                 prices.add(float(d.get("price")))
@@ -212,20 +228,21 @@ def sort_data(property):#دالة عرض العقارات
                        for k , v in value.items() :
                            print(f"{k.title()}: {v}")
             break                
-        elif op == 3: #بدون ترتيب
+        elif op == 3:  # Display unsorted
             print_property_data(property)
             break
         else:
             print("Invalid choice, please enter 1, 2, 3, or 0")
 
-def search_property(property_dict, property_type_num):#دالة البحث عن عقار
+# Search properties by city, neighborhood, price range, or full specifications
+def search_property(property_dict, property_type_num):
     found = False
-    print("\nSEARCH PROPERTIES:")#اختار طريقة البحث
-    print("1- By city name") #البحث ب اسم المدينة
-    print("2- By neighborhood name") #البحث ب اسم الحي 
-    print("3- By price range")#البحث ب السعر
-    print("4- Full search (all details)") #البحث بكامل التفاصيل 
-    print("0- Back")#الرجوع
+    print("\nSEARCH PROPERTIES:")
+    print("1- By city name")
+    print("2- By neighborhood name")
+    print("3- By price range")
+    print("4- Full search (all details)")
+    print("0- Back")
     try:
         choice = int(input("Enter your choice: "))
     except ValueError:
@@ -233,25 +250,25 @@ def search_property(property_dict, property_type_num):#دالة البحث عن 
         return
     if choice == 0:
         return
-    results = {} #ديكشنري لتخزين نتائج البحث
+    results = {}
     
-    if choice == 1: # البحث ب اسم المدينة
-        city = input("Enter city name: ").lower().strip() #ادخل اسم المدينة
+    if choice == 1:  # Filter by city
+        city = input("Enter city name: ").lower().strip()
         for name, data in property_dict.items():
-            if data.get("city").lower().strip() == city: #مقارنة بين المدينة التي ادخلها المستخدم والمدينة المسجلة ببيانات العقار
+            if data.get("city").lower().strip() == city:
                 found = True
                 results[name] = data
     
-    elif choice == 2: #البحث ب اسم الحي
-        neighborhood = input("Enter neighborhood name: ").lower().strip() #ادخل اسم الحي
+    elif choice == 2:  # Filter by neighborhood
+        neighborhood = input("Enter neighborhood name: ").lower().strip()
         for name, data in property_dict.items():
             if data.get("neighborhood",).lower().strip() == neighborhood:
                 found = True
                 results[name] = data
-    elif choice == 3: #البحث بالسعر
+    elif choice == 3:  # Filter by price range
         try:
-            min_price = float(input("Enter minimum price: ")) #ادخل الحد الادنى من السعر
-            max_price = float(input("Enter maximum price: "))#ادخل الحد الاقصى من السعر
+            min_price = float(input("Enter minimum price: "))
+            max_price = float(input("Enter maximum price: "))
         except ValueError:
             print("Invalid price input. Please enter numbers.")
             return   
@@ -261,7 +278,7 @@ def search_property(property_dict, property_type_num):#دالة البحث عن 
                 found = True
                 results[name] = data
     
-    elif choice == 4: #البحث بكامل التفاصيل
+    elif choice == 4:  # Full attribute search
         print("Enter property details to search:")
         user_input = input_property_data(property_type_num)
         for name, data in property_dict.items():
@@ -279,13 +296,14 @@ def search_property(property_dict, property_type_num):#دالة البحث عن 
         print("\nNo properties found matching your criteria.")
         return
 
-def add_property(): #دالة اضافة عقار 
+# Add a new property listing to the corresponding category dictionary
+def add_property():
     property_kind = property_type() 
     if property_kind == 0:
         return   
-    property_name = input("Enter property name or ID: ").strip()#ادخل اسم العقار
-    property_data = input_property_data(property_kind)#يطلب من المستخد ادخال بيانات العقار من الدالة
-    target_dict = None #الديكشنري المستهدف
+    property_name = input("Enter property name or ID: ").strip()
+    property_data = input_property_data(property_kind)
+    target_dict = None
     if property_kind == 1:
         target_dict = lands
         property_type_name = "land"
@@ -296,13 +314,14 @@ def add_property(): #دالة اضافة عقار
         target_dict = apartments
         property_type_name = "apartment"
     
-    if property_name in target_dict: #اذا كان اسم العقار موجود بالديكشنري المستهدف
+    if property_name in target_dict:
         print(f"There is already a {property_type_name} with this name")
     else:
         target_dict[property_name] = property_data
         print(f"The {property_type_name} has been added successfully")
 
-def edit_property():#تعديل عقار معين
+# Modify existing property attributes
+def edit_property():
     property_kind = property_type()
     if property_kind == 0:
         return
@@ -317,7 +336,7 @@ def edit_property():#تعديل عقار معين
         target_dict = apartments
         property_type_name = "apartment"
     
-    property_name = input(f"Enter {property_type_name} name: ").strip() #ادخل اسم العقار الذي تود ان تعدل عليه
+    property_name = input(f"Enter {property_type_name} name: ").strip()
     
     if property_name not in target_dict:
         print(f"{property_type_name} not found")
@@ -369,12 +388,13 @@ def edit_property():#تعديل عقار معين
     
     print("Changes saved successfully")
 
-def check_property_sold(): #دالة تأكيد بيع عقار 
+# Move a property from available inventory to the sold archive
+def check_property_sold():
     property_kind = property_type()
     if property_kind == 0:
         return
     
-    target_dict = None #الديكشنري المستهدف لاشي
+    target_dict = None
     sold_dict = None 
     property_type_name = ""
     
@@ -391,7 +411,7 @@ def check_property_sold(): #دالة تأكيد بيع عقار
         sold_dict = sold_apartments
         property_type_name = "apartment"
     
-    property_name = input(f"Enter {property_type_name} name: ").strip() #ادخل اسم العقار 
+    property_name = input(f"Enter {property_type_name} name: ").strip()
     
     if property_name in target_dict:
         sold_dict[property_name] = target_dict[property_name]
@@ -400,18 +420,23 @@ def check_property_sold(): #دالة تأكيد بيع عقار
     else:
         print(f"{property_type_name.capitalize()} not found")
 
-def login(): #تسجيل الدخول
-    attempts = 3 #ثلاث محاولات لتسجيل الدخول
+
+# ==========================================
+# 4. AUTHENTICATION & DISPLAY MENUS
+# ==========================================
+# Authenticate user credentials with a 3-attempt limit and secret word recovery
+def login():
+    attempts = 3
     while attempts > 0:
         print("="*50)
         print("LOGIN SYSTEM")
-        username = input("Username: ").strip() #ادخل اسم المستخدم
-        password = input("Password: ").strip()#ادخل كلمة المرور
+        username = input("Username: ").strip()
+        password = input("Password: ").strip()
         
-        if username in accounts:#اذا كان اليوزر في الحسابات 
+        if username in accounts:
             if accounts[username]["password"] == password:
                 print(f"\nWelcome {accounts[username]['name']}!")
-                return accounts[username]["role"] #ارجع دور المستخدم
+                return accounts[username]["role"]
             else:
                 attempts -= 1
                 print(f"Incorrect password. {attempts} attempts remaining.")
@@ -430,53 +455,59 @@ def login(): #تسجيل الدخول
     print("Too many failed attempts. Exiting.")
     return None
 
-def display_menu(user_role): #دالة عرض القائمة للمستخدم
+# Display role-specific dashboard options
+def display_menu(user_role):
     print("="*50)
-    if user_role == "manager": #اذا كان المستخدم مدير
+    if user_role == "manager":
         print("MANAGER DASHBOARD")
-        print("1- Search for property") #البحث عن عقار 
-        print("2- View all properties available") #عرض العقارات المتاحه
-        print("3- List a property for sale")#اضافه عقار 
-        print("4- Edit a property information")#تعديل عقار 
-        print("5- Confirm a property sale")#تأكيد بيع عقار 
-        print("6- Manage employee accounts")#ادارة الموظفين 
-        print("7- Manage customers accounts")  #ادارة الزبائن
-        print("0- Logout")#الخروج
-    elif user_role == "employee": #اذا كان المستخدم موظف
-        print("EMPLOYEE DASHBOARD") 
-        print("1- Search for properties")#البحث عن عقار 
-        print("2- View properties (with filters)")#عرض العقارات 
-        print("3- List a property for sale")#اضافه عقار 
-        print("4- Edit a property information")#تعديل بيانات عقار
-        print("5- Add a new tenant")#اضافه مستأجر
-        print("6- Calculate a tenant payment")#حساب الايجار لمستأجر
-        print("0- Logout")#الخروج
-    elif user_role == "tenant": #اذا كان المستخدم مستأجر
-        print("TENANT DASHBOARD")
-        print("1- View your property") #عرض العقار الخاص فيه
-        print("2- View rent details")#عرض تفاصيل الايجار
-        print("3- Auto calculate rent fees")#حساب الرسوم للعقار حقه
-        print("4- Request contract renewal")#طلب تجديد عقد الايجار
-        print("5- Edit personal info")#تعديل بيانات الخاصه به
-        print("6- View payment history")#عرض تاريخ الرسوم
+        print("1- Search for property")
+        print("2- View all properties available")
+        print("3- List a property for sale")
+        print("4- Edit a property information")
+        print("5- Confirm a property sale")
+        print("6- Manage employee accounts")
+        print("7- Manage customers accounts")
         print("0- Logout")
-    elif user_role == "customer":#اذا كان المستخدم زبون
+    elif user_role == "employee":
+        print("EMPLOYEE DASHBOARD") 
+        print("1- Search for properties")
+        print("2- View properties (with filters)")
+        print("3- List a property for sale")
+        print("4- Edit a property information")
+        print("5- Add a new tenant")
+        print("6- Calculate a tenant payment")
+        print("0- Logout")
+    elif user_role == "tenant":
+        print("TENANT DASHBOARD")
+        print("1- View your property")
+        print("2- View rent details")
+        print("3- Auto calculate rent fees")
+        print("4- Request contract renewal")
+        print("5- Edit personal info")
+        print("6- View payment history")
+        print("0- Logout")
+    elif user_role == "customer":
         print("CUSTOMER DASHBOARD")
-        print("1- Search for available properties")#البحث عن عقار متاح للشراء
-        print("2- Send purchase interest request")#ارسال طلب اهتمام بشراء عقار
-        print("3- Request to show property for sale")#طلب عرض عقار للبيع في البرنامج
-        print("4- Register or make inquiry")#تسجيل زبون 
-        print("0- Logout")#خروج
+        print("1- Search for available properties")
+        print("2- Send purchase interest request")
+        print("3- Request to show property for sale")
+        print("4- Register or make inquiry")
+        print("0- Logout")
     print("="*50)
 
-def employee_management(): #دالة ادارة الموظفين
+
+# ==========================================
+# 5. ACCOUNT & REQUEST MANAGEMENT
+# ==========================================
+# Manage employee accounts (view, add, edit, delete)
+def employee_management():
     while True:  
-        print("EMPLOYEE MANAGEMENT") #ادارة الموظفين
-        print("1- View all employees information")#عرض الموظفين 
-        print("2- Add a new employee")#اضاف موظف جديد
-        print("3- Edit employee information")#تعديل بيانات موظف
-        print("4- Delete an employee account") #حذف حساب موظف
-        print("5- Back")#رجوع  
+        print("EMPLOYEE MANAGEMENT")
+        print("1- View all employees information")
+        print("2- Add a new employee")
+        print("3- Edit employee information")
+        print("4- Delete an employee account")
+        print("5- Back")
         try:
             cho = int(input("Enter number of operation: "))
         except ValueError:
@@ -486,9 +517,9 @@ def employee_management(): #دالة ادارة الموظفين
             break   
         if cho == 1:
             print("VIEW EMPLOYEES:")
-            print("1- View all employee data") #عرض بيانات الموظفين كامل
-            print("2- View a specific employee data")#عرض بيانات موظف فقط
-            print("0- Back") #رجوع
+            print("1- View all employee data")
+            print("2- View a specific employee data")
+            print("0- Back")
             try:
                 op = int(input("Enter your choice: "))
             except ValueError:
@@ -496,37 +527,37 @@ def employee_management(): #دالة ادارة الموظفين
                 continue
             if op == 0:
                 continue
-            elif op == 1: #عرض بيانات حسابات الموظفين كامل
+            elif op == 1:
                 print("ALL EMPLOYEES:")
                 for id, data in accounts.items():
-                    if data["role"] == "employee":#اذا كان الحساب دوره موظف
-                        print(f"\n{id}:") #اطبع الايدي حقه
+                    if data["role"] == "employee":
+                        print(f"\n{id}:")
                         for k, v in data.items(): 
-                            print(f"{k}: {v}") #اطبع بيانات حسابة
-            elif op == 2: #عرض بيانات حساب موظف معين
-                ide = input("Enter employee id: ").strip().lower() #ادخل ايدي الموظف المراد طباعة معلوماته
-                if ide in accounts and accounts[ide]["role"] == "employee":#اذا كان الايدي موجود في ديكشنري الحسابات ودوره موظف
-                    print(f"\n{ide}:")#اطبع الايدي حقه
+                            print(f"{k}: {v}")
+            elif op == 2:
+                ide = input("Enter employee id: ").strip().lower()
+                if ide in accounts and accounts[ide]["role"] == "employee":
+                    print(f"\n{ide}:")
                     for k, v in accounts[ide].items():
-                        print(f"{k}: {v}")#اطبع بياناته
-                else: #في حالة عدم وجود ايدي الموظف
-                    print("Employee not found" ) #اطبع الموظف غير موجود
+                        print(f"{k}: {v}")
+                else:
+                    print("Employee not found" )
             else: 
                 print("Invalid choice")
                 
-        elif cho == 2: #اضافه موظف جديد
-            print("ADD NEW EMPLOYEE:") #اضافة موظف جديد
-            id = input("Enter employee ID: ").strip() #ادخل ايدي الموظف الجديد
-            if id in accounts: #اذا كان الايدي هذا مسجل من قبل
-                print("This ID already exists")#اطبع يوجد ايدي مسجل بهذا الاسم
+        elif cho == 2:  # Add new employee
+            print("ADD NEW EMPLOYEE:")
+            id = input("Enter employee ID: ").strip()
+            if id in accounts:
+                print("This ID already exists")
                 continue   
-            name = input("Enter name of employee: ").strip() #ادخل اسم الموظف
-            email = input("Enter email of employee: ").strip().lower()#ادخل ايميل الموظف
-            phone = input("Enter phone number of employee: ").strip()#ادخل رقم الموظف 
-            password = input("Enter password for employee: ").strip()#ادخل كلمة مرور للموظف
-            secretword = input("Enter secret word for employee: ").strip()#ادخل كلمة سر للمستخدم
+            name = input("Enter name of employee: ").strip()
+            email = input("Enter email of employee: ").strip().lower()
+            phone = input("Enter phone number of employee: ").strip()
+            password = input("Enter password for employee: ").strip()
+            secretword = input("Enter secret word for employee: ").strip()
             
-            accounts[id] = {   #ضف معلومات الموظف الجديد الى ديكشنري الحسابات
+            accounts[id] = {
                 "name": name,
                 "email": email,
                 "phone": phone,
@@ -534,51 +565,52 @@ def employee_management(): #دالة ادارة الموظفين
                 "secretword": secretword,
                 "role": "employee"
             }
-            print("Employee has been added successfully") #الموظف تم اضافته بنجاح
+            print("Employee has been added successfully")
 
-        elif cho == 3: #تعديل بيانات موظف ما
+        elif cho == 3:  # Edit existing employee
             print("EDIT EMPLOYEE INFORMATION:")
-            i = input("Enter id of employee: ").strip().lower() #ادخل ايدي الموظف المراد تعديل بياناته
-            if i in accounts and accounts[i]["role"] == "employee": #اذا كان الايدي موجود في الحسابات وكان دوره موظف
-                print(f"\nCurrent information for {i}:") #المعلومات الحاليه للموظف
-                for k, v in accounts[i].items(): #اعمل لوب لبيانات ايدي الموظف هذا
-                    print(f"{k}: {v}") #اطبع بياناته
+            i = input("Enter id of employee: ").strip().lower()
+            if i in accounts and accounts[i]["role"] == "employee":
+                print(f"\nCurrent information for {i}:")
+                for k, v in accounts[i].items():
+                    print(f"{k}: {v}")
                 
-                print("\nEnter new information :")#ادخل المعلومات الجديده للموظف
-                new_name = input("Enter new name :") #ادخل الاسم الجديد 
-                new_email = input("Enter new email")#ادخل الايميل الجديد
-                new_phone = input("Enter new phone :")#ادخل الرقم الجديد 
-                new_password = input("Enter new password")#ادخل كلمة السر الجديده له
-                new_secretword = input("Enter new secret word")#ادخل كلمة سر مساعده
+                print("\nEnter new information :")
+                new_name = input("Enter new name :")
+                new_email = input("Enter new email")
+                new_phone = input("Enter new phone :")
+                new_password = input("Enter new password")
+                new_secretword = input("Enter new secret word")
                 
-                accounts[i]["name"] = new_name #عدل الاسم الجديد في الحساب
-                accounts[i]["email"] = new_email#عدل الايميل الجديد للموظف
-                accounts[i]["phone"] = new_phone#ادخل الرقم الجديد
+                accounts[i]["name"] = new_name
+                accounts[i]["email"] = new_email
+                accounts[i]["phone"] = new_phone
                 accounts[i]["password"] = new_password
                 accounts[i]["secretword"] = new_secretword
                 print("Employee information updated successfully")
             else:
                 print("Employee not found")
                 
-        elif cho == 4: #حذف حساب موظف
+        elif cho == 4:  # Delete employee account
             print("DELETE EMPLOYEE ACCOUNT:")
-            idd = input("Enter id of employee: ").strip().lower() #ادخل ايدي الموظف المراد حذفه
-            if idd in accounts and accounts[idd]["role"] == "employee": #اذا كان الايدي موجود في الحسابات وكان دوره موظف
-                del accounts[idd] #احذف الحساب للايدي هذا
-                print("Employee account deleted successfully")#تم حذف الحساب
+            idd = input("Enter id of employee: ").strip().lower()
+            if idd in accounts and accounts[idd]["role"] == "employee":
+                del accounts[idd]
+                print("Employee account deleted successfully")
             else:
-                print("Employee not found")#لايوجد حساب بهذا الايدي
+                print("Employee not found")
                 
         else: 
             print("Invalid number, enter 1-5")
 
-def customer_management():#دالة ادارة الزبائن
+# Review customer purchase requests and approve property sale offers
+def customer_management():
     while True:
         print("CUSTOMER MANAGEMENT:")
-        print("1- View all purchase requests")#عرض طلبات الشراء من الزبائن
-        print("2- View property offers")#طلبات عرض بيع عقار في البرنامج
-        print("3- Confirm property offer")#تأكيد قبول لطلب عرض عقار في البرنامج
-        print("0- Back")  #رجوع
+        print("1- View all purchase requests")
+        print("2- View property offers")
+        print("3- Confirm property offer")
+        print("0- Back")
         try:
             t = int(input("Enter your choice: "))
         except ValueError:
@@ -586,46 +618,46 @@ def customer_management():#دالة ادارة الزبائن
             continue  
         if t == 0:
             break    
-        if t == 1:#عرض طلبات شراء من الزبائن
-            if not request_of_purchase:#اذا كان لايوجد طلبات متاحه
-                print("No purchase requests available")#لايوجد طلبات
-            else: #في حال وجود طلبات
+        if t == 1:  # View purchase requests
+            if not request_of_purchase:
+                print("No purchase requests available")
+            else:
                 print("PURCHASE REQUESTS:")
-                for k, v in request_of_purchase.items(): #اعمل لوب في الطلبات
-                    print(f"\nCustomer: {accounts[k]['name']} (ID: {k})") #اطبع اسم الزبون والايدي حقه
+                for k, v in request_of_purchase.items():
+                    print(f"\nCustomer: {accounts[k]['name']} (ID: {k})")
                     print("Requested Property:")
                     for i, d in v.items():
-                        print(f"{i}: {d}") #اطبع معلومات العقار المراد شراءه من قبل الزبون
-        elif t == 2:
-            if not request_of_sell:#اذا كان لايوجد عروض 
-                print("No property offers available")#لايوجد عروض
-            else:#في حال وجود عروض بيع
+                        print(f"{i}: {d}")
+        elif t == 2:  # View sale offers
+            if not request_of_sell:
+                print("No property offers available")
+            else:
                 print("PROPERTY OFFERS:")
-                for k, v in request_of_sell.items():#اعمل لوب للعروض
-                    print(f"\nProperty ID: {k}") #اطبع الايدي حق العقار المراد بيعه
+                for k, v in request_of_sell.items():
+                    print(f"\nProperty ID: {k}")
                     for i, d in v.items():
-                        print(f"{i}: {d}")  #اطبع معلومات العقار  
-        elif t == 3:#تاكيد طلب عرض عقار في البرنامج
-            if not request_of_sell:#اذا كان لايوجد عروض
-                print("No property offers available")#لايوجد عروض
+                        print(f"{i}: {d}")  
+        elif t == 3:  # Approve a customer's sale offer and move it to active listings
+            if not request_of_sell:
+                print("No property offers available")
                 continue   
-            print("AVAILABLE OFFERS:")#العروض المتاحه
+            print("AVAILABLE OFFERS:")
             for k in request_of_sell.keys():
-                print(f"- {k}") #اطبع الايديهات حق العقارات المعروضه للبيع 
-            id = input("\nEnter ID of property to confirm: ").strip().lower() #ادخل الايدي حق العقار اللي تريد تاكيد عرضه في البرنامج
-            if id in request_of_sell:#اذا كان الايدي موجود في العروض
-                pk = property_type() #ادخل نوع العقار
-                if pk == 1:#اذا كان نوع العقار اراضي 
-                    lands[id] = request_of_sell[id] #اضف العقار الى البرنامج
-                    del request_of_sell[id] #واحذفه من العروض
-                    print("Property added to available lands")#تم اضافه العقار الى البرنامج
-                elif pk == 2: #اذا كان نوع العقار منازل
-                    houses[id] = request_of_sell[id]#اضف المنزل الى منازل البرنامج
-                    del request_of_sell[id]#واحذفه من العروض
+                print(f"- {k}")
+            id = input("\nEnter ID of property to confirm: ").strip().lower()
+            if id in request_of_sell:
+                pk = property_type()
+                if pk == 1:
+                    lands[id] = request_of_sell[id]
+                    del request_of_sell[id]
+                    print("Property added to available lands")
+                elif pk == 2:
+                    houses[id] = request_of_sell[id]
+                    del request_of_sell[id]
                     print("Property added to available houses")
-                elif pk == 3:#اذا كان العقار نوعه شقه
-                    apartments[id] = request_of_sell[id] #اضف الشقه الى البرنامج
-                    del request_of_sell[id]#واحذفه من العروض
+                elif pk == 3:
+                    apartments[id] = request_of_sell[id]
+                    del request_of_sell[id]
                     print("Property added to available apartments")
                 else:
                     print("Operation cancelled")
@@ -634,9 +666,14 @@ def customer_management():#دالة ادارة الزبائن
         else:
             print("Invalid choice")
 
-def manager_menu():# دالة عمليات المدير
+
+# ==========================================
+# 6. ROLE DASHBOARD CONTROLLERS
+# ==========================================
+# Handle Manager dashboard operations
+def manager_menu():
     while True :
-        display_menu("manager")  #دالة عرض الخيارات المتاحه للمدير
+        display_menu("manager")
         try:
             c = int(input("Enter number of operation: "))
         except ValueError:
@@ -644,44 +681,43 @@ def manager_menu():# دالة عمليات المدير
             continue
         if c == 0:
             break    
-        if c == 1: # البحث عن عقار
-            property_t = property_type() #دالة معرفة نوع العقار
+        if c == 1:
+            property_t = property_type()
             if property_t == 0:
                 continue
-            elif property_t == 1: # نوع العقار ارض
-                search_property(lands, property_t) #دالة البحث عن عقار
+            elif property_t == 1:
+                search_property(lands, property_t)
             elif property_t == 2:
                 search_property(houses, property_t)
             else:
                 search_property(apartments, property_t)  
                       
-        elif c == 2:# عرض العقارات 
+        elif c == 2:
             property_k = property_type()
             if property_k == 0:
                 continue
             elif property_k == 1: 
-                sort_data(lands)#دالة ترتيب العقارات وطباعتها
+                sort_data(lands)
             elif property_k == 2:
                 sort_data(houses) 
             else:
                 sort_data(apartments)
             
-        elif c == 3: #اضافة عقار 
-            add_property() #دالة اضاف عقار
-        elif c == 4: #تعديل عقار 
-            edit_property()#دالة تعديل عقار
-        elif c == 5: #تأكيد بيع عقار 
-            check_property_sold()#دالة تأكيد بيع عقار  
-        elif c == 6: #ادارة الموظفيين
-            employee_management()#دالةادارة الموظفيين
-        
-        elif c == 7: #ادارة الزبائن
-            customer_management()#دالة ادارة الزبائن
-            
+        elif c == 3:
+            add_property()
+        elif c == 4:
+            edit_property()
+        elif c == 5:
+            check_property_sold()
+        elif c == 6:
+            employee_management()
+        elif c == 7:
+            customer_management()
         else:
             print("Invalid choice. Please try again.")
 
-def employee_menu(): #قائمة الموظف
+# Handle Employee dashboard operations
+def employee_menu():
     while True: 
         display_menu("employee")   
         try:
@@ -691,7 +727,7 @@ def employee_menu(): #قائمة الموظف
             continue
         if c == 0:
             break   
-        if c == 1: #البحث عن عقار
+        if c == 1:
             property_t = property_type()
             if property_t == 0:
                 continue
@@ -702,7 +738,7 @@ def employee_menu(): #قائمة الموظف
             else:
                 search_property(apartments, property_t)
                 
-        elif c == 2:#عرض العقارات
+        elif c == 2:
             property_k = property_type()
             if property_k == 0:
                 continue
@@ -713,45 +749,45 @@ def employee_menu(): #قائمة الموظف
             else:
                 sort_data(apartments)       
                 
-        elif c == 3:#اضافه عقار
+        elif c == 3:
             add_property()
             
-        elif c == 4:#تعديل عقار معين
+        elif c == 4:
             edit_property() 
             
-        elif c == 5: #اضافة مستأجر
+        elif c == 5:  # Register a new tenant and link to an existing property
             print("ADD NEW TENANT:")
-            id = input("Enter ID for new tenant: ").strip() #ادخل الايدي حق  المستأجر الذي تريد اضافته
-            if id in accounts:#اذا يوجد ايدي بنفس هذا الايدي
-                print("This ID already exists")#اطبع يوجد ايدي مسجل بهذا
+            id = input("Enter ID for new tenant: ").strip()
+            if id in accounts:
+                print("This ID already exists")
                 continue   
-            name = input("Enter name of tenant: ").strip()#اسم المستأجر
-            email = input("Enter email of tenant: ").strip().lower()#الايميل
-            phone = input("Enter phone number of tenant: ").strip()#الرقم
-            password = input("Enter password for tenant: ").strip()#كلمة المرور
-            secretword = input("Enter secret word for tenant: ").strip()    #كلمة مرور احتياطيه
+            name = input("Enter name of tenant: ").strip()
+            email = input("Enter email of tenant: ").strip().lower()
+            phone = input("Enter phone number of tenant: ").strip()
+            password = input("Enter password for tenant: ").strip()
+            secretword = input("Enter secret word for tenant: ").strip()
             pr = property_type()
             if pr == 0:
                 continue  
             property_id = None
-            if pr == 1: #اذا كان نوع العقار ارض
-                property_id = input("Enter ID of land: ").strip().lower()#ادخل ايدي الارض المستأجره
-                if property_id not in lands: #اذا كان ايدي العقار لايوجد في الاراضي
-                    print("Land not found")#لا يوجد ارض بهذا الايدي
+            if pr == 1:
+                property_id = input("Enter ID of land: ").strip().lower()
+                if property_id not in lands:
+                    print("Land not found")
                     continue
-                property_data = lands[property_id]#خذ بيانات الارض 
-            elif pr == 2:#اذا كان نوع العقار منزل
-                property_id = input("Enter ID of house: ").strip().lower()#ادخل ايدي المنزل
+                property_data = lands[property_id]
+            elif pr == 2:
+                property_id = input("Enter ID of house: ").strip().lower()
                 if property_id not in houses:
                     print("House not found")
                     continue
-                property_data = houses[property_id]#خذ بيانات المنزل
-            elif pr == 3:    #اذا كان نوع العقار شقه
-                property_id = input("Enter ID of apartment: ").strip().lower()#ادخل ايدي الشقه
+                property_data = houses[property_id]
+            elif pr == 3:
+                property_id = input("Enter ID of apartment: ").strip().lower()
                 if property_id not in apartments:
                     print("Apartment not found")
                     continue
-                property_data = apartments[property_id]#خذ معلومات الشقه
+                property_data = apartments[property_id]
             
             accounts[id] = {
                 "name": name,
@@ -760,36 +796,37 @@ def employee_menu(): #قائمة الموظف
                 "password": password,
                 "secretword": secretword,
                 "role": "tenant",
-                "property": property_data #معلومات عقار المستأجر
+                "property": property_data
             }
-            print("Tenant added successfully")#تم اضافه المستأجر
+            print("Tenant added successfully")
             
-        elif c == 6:#حساب رسوم المستأجر
+        elif c == 6:  # Calculate monthly rent (10% of property price)
             print("CALCULATE TENANT PAYMENT:")
-            tenant_id = input("Enter tenant ID: ").strip()#ادخل ايدي المستأجر
-            if tenant_id in accounts and accounts[tenant_id]["role"] == "tenant":#اذا كان الايدي موجود بالحسابات وكان دوره مستأجر
-                price = float(accounts[tenant_id]["property"].get("price", 0))#خذ سعر العقار من حسابه
-                print(f"\nTenant: {accounts[tenant_id]['name']}")#اطبع اسمه 
-                print(f"Property Price: {price}")#سعر العقار
-                print(f"Monthly Rent: {price * 0.1}")  #الرسوم الشهريه
-            else:#في حال عدم وجود ايدي المستأجر
-                print("Tenant not found")  #المستأجر لا يوجد
+            tenant_id = input("Enter tenant ID: ").strip()
+            if tenant_id in accounts and accounts[tenant_id]["role"] == "tenant":
+                price = float(accounts[tenant_id]["property"].get("price", 0))
+                print(f"\nTenant: {accounts[tenant_id]['name']}")
+                print(f"Property Price: {price}")
+                print(f"Monthly Rent: {price * 0.1}")
+            else:
+                print("Tenant not found")
         else:
             print("Invalid choice")
 
-def tenant_menu(): # دالة قائمه المستأجر
+# Handle Tenant dashboard operations
+def tenant_menu():
     tenant_id = None
-    for id, data in accounts.items():#يشوف اذا في حسابات مسـتاجرين
-        if data["role"] == "tenant": #اذا كان دورة مستاجر
+    for id, data in accounts.items():
+        if data["role"] == "tenant":
             tenant_id = id
             break
     
     if not tenant_id:
-        print("No tenant account found")#لايوجد مستأجر
+        print("No tenant account found")
         return
         
     while True: 
-        display_menu("tenant")# عرض خيارات المستأجر
+        display_menu("tenant")
         
         try:
             c = int(input("Enter number of operation: "))
@@ -800,23 +837,23 @@ def tenant_menu(): # دالة قائمه المستأجر
         if c == 0:
             break
             
-        if c == 1: #عرض العقار الخاص بالمستأجر
+        if c == 1:  # View leased property details
             print("YOUR PROPERTY:")
             for k, v in accounts[tenant_id]["property"].items():
                 print(f"{k}: {v}")     
-        elif c == 2:#عرض تفاصيل الايجار
-            price = float(accounts[tenant_id]["property"].get("price", 0))#خذ سعر عقار المستاجر
+        elif c == 2:  # View rent breakdown (10% monthly, 20% deposit)
+            price = float(accounts[tenant_id]["property"].get("price", 0))
             print("RENT DETAILS:")
-            print(f"Monthly Rent: {price * 0.1}")#الرسوم الشهريه
-            print(f"Annual Rent: {price * 0.1 * 12}")#الرسوم السنويه
-            print(f"Security Deposit: {price * 0.2}")     #التأمين
-        elif c == 3: #حساب الرسوم
-            price = float(accounts[tenant_id]["property"].get("price", 0))#خذ سعر عقار المستخدم
-            months = int(input("Enter number of months: ")) #ادخل عدد الشهور 
-            print(f"\nTotal rent for {months} months: {price * 0.1 * months}") #احسب رسوم     
-        elif c == 4:#طلب تجديد عقد ايجار
+            print(f"Monthly Rent: {price * 0.1}")
+            print(f"Annual Rent: {price * 0.1 * 12}")
+            print(f"Security Deposit: {price * 0.2}")
+        elif c == 3:  # Calculate total rent for a custom number of months
+            price = float(accounts[tenant_id]["property"].get("price", 0))
+            months = int(input("Enter number of months: "))
+            print(f"\nTotal rent for {months} months: {price * 0.1 * months}")
+        elif c == 4:
             print("Contract renewal request has been sent to management.")   
-        elif c == 5:#تعديل بيانات المستاجر الخاصه
+        elif c == 5:  # Update personal profile information
             print("EDIT PERSONAL INFORMATION:")
             print("\nCurrent information:")
             for k, v in accounts[tenant_id].items():
@@ -842,7 +879,8 @@ def tenant_menu(): # دالة قائمه المستأجر
         else:
             print("Invalid choice")
 
-def customer_menu(): #دالة قائمة الزبون
+# Handle Customer dashboard operations
+def customer_menu():
     while True: 
         display_menu("customer")
         
@@ -855,7 +893,7 @@ def customer_menu(): #دالة قائمة الزبون
         if c == 0:
             break
             
-        if c == 1:#البحث عن عقار
+        if c == 1:
             property_t = property_type()
             if property_t == 0:
                 continue
@@ -866,8 +904,8 @@ def customer_menu(): #دالة قائمة الزبون
             else:
                 search_property(apartments, property_t)
                 
-        elif c == 2:#ارسال طلب اهتمام بشراء عقار
-            customer_id = input("Enter your customer ID: ").strip() # ادخل الادي 
+        elif c == 2:  # Submit a purchase request for an available property
+            customer_id = input("Enter your customer ID: ").strip()
             if customer_id not in accounts or accounts[customer_id]["role"] != "customer":
                 print("Customer not found")
                 continue
@@ -876,11 +914,11 @@ def customer_menu(): #دالة قائمة الزبون
             if prop == 0:
                 continue
                 
-            if prop == 1:#اذا كان نوع العقار اراضي
-                print_property_data(lands) #اطبع كل العقارات المتاحه للبيع
-                id = input("Enter ID of property you're interested in: ").strip() #اطلب من الزبون ادخال ايدي العقار الذي ريد شراءه
+            if prop == 1:
+                print_property_data(lands)
+                id = input("Enter ID of property you're interested in: ").strip()
                 if id in lands:
-                    request_of_purchase[customer_id] = lands[id] #ارسل الطلب 
+                    request_of_purchase[customer_id] = lands[id]
                     print("Your request has been sent successfully")
                 else:
                     print("Property not found")
@@ -901,27 +939,27 @@ def customer_menu(): #دالة قائمة الزبون
                 else:
                     print("Property not found")
             
-        elif c == 3: #طلب عرض عقار للبيع في البرنامج
+        elif c == 3:  # Submit an offer to list a customer's property for sale
             print("SELL PROPERTY REQUEST")
             pt = property_type()
             if pt == 0:
                 continue
                 
-            id = input("Enter ID for the property: ").strip().lower() #ادخل ايدي لعقارك
-            if (pt == 1 and id in lands) or (pt == 2 and id in houses) or (pt == 3 and id in apartments): #اذا يوجد ايدي مسجل مسبق بهذا الاسم 
-                print("This property already exists in our system") #يوجد ايدي مسجل بهذا
+            id = input("Enter ID for the property: ").strip().lower()
+            if (pt == 1 and id in lands) or (pt == 2 and id in houses) or (pt == 3 and id in apartments):
+                print("This property already exists in our system")
                 continue    
-            data = input_property_data(pt) #ادخل معلومات عقارك الذي تريد بيعه
-            request_of_sell[id] = data #اضف الطلب هذا
+            data = input_property_data(pt)
+            request_of_sell[id] = data
             print("Your request has been submitted. We will contact you soon.")   
-        elif c == 4: #تسجيل زبون
+        elif c == 4:  # Register a new customer account
             print("REGISTER NEW CUSTOMER:")
-            id = input("Enter customer ID: ").strip() #ادخل الايدي
+            id = input("Enter customer ID: ").strip()
             if id in accounts:
                 print("This ID already exists")
                 continue
                 
-            name = input("Enter your name: ").strip() #ادخل الاسم
+            name = input("Enter your name: ").strip()
             password = input("Enter password: ").strip()
             secretword = input("Enter secret word for password recovery: ").strip()
             
@@ -935,7 +973,12 @@ def customer_menu(): #دالة قائمة الزبون
         else:
             print("Invalid choice")
 
-def main():#الداله الرئيسيه     
+
+# ==========================================
+# 7. MAIN APPLICATION LOOP
+# ==========================================
+# Load data from files, run the main login loop, and save data on exit
+def main():
     lands = load_from_file("property_l.txt") 
     houses = load_from_file("property_houses.txt")
     apartments = load_from_file("property_apartment.txt")
@@ -947,12 +990,12 @@ def main():#الداله الرئيسيه
     accounts= load_from_file("users.account.txt")
     while True:
         print("="*50)
-        print("PROPERTY MANAGEMENT SYSTEM") #نظام ادارة عقارات
-        print("1- Login") #تسجيل الدخول
-        print("0- Exit") #الخروخ
+        print("PROPERTY MANAGEMENT SYSTEM")
+        print("1- Login")
+        print("0- Exit")
         print("="*50)
         
-        try: #عشان م يوقف البرنامج عند ادخال المستخدم نص
+        try:
             option = int(input("Enter your choice: "))
         except ValueError:
             print("Please enter a valid number")
@@ -968,17 +1011,17 @@ def main():#الداله الرئيسيه
             save_to_file("sold.property.apartments.txt",sold_apartments)
             save_to_file("purchase_requsets.txt",request_of_purchase)
             save_to_file("offers_requset.txt",request_of_sell)
-            print("Thank you for using our system. Goodbye!")#شكرا لاستخدامك برنامجنا 
+            print("Thank you for using our system. Goodbye!")
             break
             
         elif option == 1:
-            role = login() #دالة تسجيل الدخول
-            if role == "manager": #اذا كان المستخدم مدير
-                manager_menu() #دالة قائمة المدير
-            elif role == "employee":#اذا كان المستخدم موظف
-                employee_menu() #دالة قائمه الموظف
-            elif role == "tenant": #اذا كان المستخدم مستأجر
-                tenant_menu() #دالة قائمة المستاجر
+            role = login()
+            if role == "manager":
+                manager_menu()
+            elif role == "employee":
+                employee_menu()
+            elif role == "tenant":
+                tenant_menu()
             elif role == "customer":
                 customer_menu()
                 
@@ -986,7 +1029,4 @@ def main():#الداله الرئيسيه
             print("Invalid option. Please try again.")
 
 
-
 main()
-
-
