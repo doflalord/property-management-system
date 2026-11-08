@@ -1,7 +1,0 @@
-house1:
-city:taiz
-neighborhood:almasbah
-floors:3
-price:1000
-number of apartments:6
-
