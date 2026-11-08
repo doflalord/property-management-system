@@ -1,4 +1,4 @@
-# 🏢 Property Management System (نظام إدارة العقارات)
+#  Property Management System (نظام إدارة العقارات)
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white)
 ![Tkinter](https://img.shields.io/badge/GUI-Tkinter-0284c7?style=for-the-badge)
@@ -11,7 +11,7 @@ A comprehensive **Property Management System (PMS)** built in Python. This proje
 ##  Key Features
 
 * **Dual Interface Support:**
-  * 🖥️ **Modern Desktop GUI (`pms_gui.py`):** Features a sleek dark slate theme, interactive `Treeview` data tables, instant search/filter bars, and 1-click demo login buttons.
+  *  **Modern Desktop GUI (`pms_gui.py`):** Features a sleek dark slate theme, interactive `Treeview` data tables, instant search/filter bars, and 1-click demo login buttons.
   * ⌨️ **Interactive CLI (`property.management.system.py`):** Menu-driven console application for terminal-based operations.
 * **Role-Based Access Control (RBAC):** Custom dashboards and permissions tailored for **Managers**, **Employees**, **Tenants**, and **Customers**.
 * **Real Estate Inventory Management:** Full CRUD (Create, Read, Update, Delete/Mark as Sold) support for **Lands**, **Houses**, and **Apartments**.
